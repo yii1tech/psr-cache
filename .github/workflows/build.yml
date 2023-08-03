@@ -20,9 +20,12 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: mbstring
+          extensions: mbstring, pdo, sqlite, pdo_sqlite, memcached
           tools: composer:v2
           coverage: none
+
+      - name: Install Memcached.
+        uses: niden/actions-memcached@v7
 
       - name: Install dependencies
         run: |

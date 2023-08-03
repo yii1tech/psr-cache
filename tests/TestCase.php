@@ -40,8 +40,14 @@ class TestCase extends \PHPUnit\Framework\TestCase
             'id' => 'testapp',
             'basePath' => __DIR__,
             'components' => [
+                'db' => [
+                    'class' => \CDbConnection::class,
+                    'connectionString' => 'sqlite::memory:',
+                ],
                 'cache' => [
-                    'class' => \CDummyCache::class,
+                    'class' => \CDbCache::class,
+                    'connectionID' => 'db',
+                    'autoCreateCacheTable' => true,
                 ],
             ],
         ], $config));
