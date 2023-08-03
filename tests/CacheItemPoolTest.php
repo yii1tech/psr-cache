@@ -200,4 +200,36 @@ class CacheItemPoolTest extends TestCase
 
         $this->assertSame($value, $cache->get($key));
     }
+
+    /**
+     * @depends testSave
+     */
+    public function testSaveWithDependency(): void
+    {
+        $pool = new CacheItemPool();
+
+        $GLOBALS['test_state'] = 1;
+
+        $key = 'test';
+        $value = 'test-value';
+
+        $item = $pool->getItem($key);
+        $item->set($value);
+        $item->expiresAfter(DateInterval::createFromDateString('1 hour'));
+        $item->depends(new \CExpressionDependency('$GLOBALS["test_state"] == 1'));
+
+        $this->assertTrue($pool->save($item));
+
+        $this->assertTrue($pool->hasItem($key));
+
+        $item = $pool->getItem($key);
+        $this->assertTrue($item->isHit());
+
+        $GLOBALS['test_state'] = 2;
+
+        $this->assertFalse($pool->hasItem($key));
+
+        $item = $pool->getItem($key);
+        $this->assertFalse($item->isHit());
+    }
 }

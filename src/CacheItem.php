@@ -3,13 +3,12 @@
 namespace yii1tech\psr\cache;
 
 use CComponent;
-use Psr\Cache\CacheItemInterface;
 
 /**
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 1.0
  */
-class CacheItem extends CComponent implements CacheItemInterface
+class CacheItem extends CComponent implements CacheItemContract
 {
     /**
      * @var string cache item key (ID).
@@ -25,6 +24,11 @@ class CacheItem extends CComponent implements CacheItemInterface
      * @var int|null cache item expire.
      */
     private $_expire;
+
+    /**
+     * @var \ICacheDependency|null dependency of the cache item.
+     */
+    private $_dependency;
 
     /**
      * Sets the key for the current cache item.
@@ -45,6 +49,25 @@ class CacheItem extends CComponent implements CacheItemInterface
     public function getExpire()
     {
         return $this->_expire;
+    }
+
+    /**
+     * @return \ICacheDependency|null dependency of the cache item.
+     */
+    public function getDependency(): ?\ICacheDependency
+    {
+        return $this->_dependency;
+    }
+
+    /**
+     * @param \ICacheDependency|null $dependency dependency of the cache item.
+     * @return static self reference.
+     */
+    public function setDependency(?\ICacheDependency $dependency): self
+    {
+        $this->_dependency = $dependency;
+
+        return $this;
     }
 
     /**
@@ -114,5 +137,13 @@ class CacheItem extends CComponent implements CacheItemInterface
         }
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function depends(?\ICacheDependency $dependency): self
+    {
+        return $this->setDependency($dependency);
     }
 }

@@ -175,8 +175,8 @@ class CacheItemPool extends CApplicationComponent implements CacheItemPoolInterf
         return $this->getCache()->set(
             $item->getKey(),
             $item->get(),
-            $item->getExpire()
-            // @todo dependency
+            $item->getExpire(),
+            $item->getDependency()
         );
     }
 
