@@ -78,7 +78,7 @@ class CacheItem extends CComponent implements CacheItemInterface
     /**
      * {@inheritdoc}
      */
-    public function set($value): static
+    public function set($value): self
     {
         $this->_value = $value;
 
@@ -88,7 +88,7 @@ class CacheItem extends CComponent implements CacheItemInterface
     /**
      * {@inheritdoc}
      */
-    public function expiresAt($expiration): static
+    public function expiresAt($expiration): self
     {
         if ($expiration === null) {
             $this->_expire = null;
@@ -102,7 +102,7 @@ class CacheItem extends CComponent implements CacheItemInterface
     /**
      * {@inheritdoc}
      */
-    public function expiresAfter($time): static
+    public function expiresAfter($time): self
     {
         if ($time === null) {
             $this->_expire = null;
