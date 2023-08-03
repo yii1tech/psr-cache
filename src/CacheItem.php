@@ -58,7 +58,7 @@ class CacheItem extends CComponent implements CacheItemInterface
     /**
      * {@inheritdoc}
      */
-    public function get(): mixed
+    public function get()
     {
         if ($this->_value === false) {
             return null;
