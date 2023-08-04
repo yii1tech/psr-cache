@@ -4,7 +4,6 @@ namespace yii1tech\psr\cache;
 
 use CApplicationComponent;
 use Psr\Cache\CacheItemInterface;
-use Psr\Cache\CacheItemPoolInterface;
 use Yii;
 
 /**
@@ -34,7 +33,7 @@ use Yii;
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 1.0
  */
-class CacheItemPool extends CApplicationComponent implements CacheItemPoolInterface
+class CacheItemPool extends CApplicationComponent implements CacheItemPoolContract
 {
     /**
      * @var bool whether to automatically commit all deferred items on object destruction.
@@ -229,5 +228,25 @@ class CacheItemPool extends CApplicationComponent implements CacheItemPoolInterf
         }
 
         return $result;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function get(string $key, callable $callback)
+    {
+        $item = $this->getItem($key);
+
+        if ($item->isHit()) {
+            return $item->get();
+        }
+
+        $value = call_user_func($callback, $item);
+
+        $item->set($value);
+
+        $this->save($item);
+
+        return $value;
     }
 }

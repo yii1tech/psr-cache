@@ -126,7 +126,7 @@ function getCategoriesCount()
 ```
 
 
-### Simplified interface <span id="simplified-interface"></span>
+### Extended interface <span id="extended-interface"></span>
 
 
 ### Using cache tags <span id="using-cache-tags"></span>

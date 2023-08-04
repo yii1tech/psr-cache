@@ -5,6 +5,7 @@ namespace yii1tech\psr\cache\test;
 use CDummyCache;
 use DateInterval;
 use ICache;
+use yii1tech\psr\cache\CacheItemContract;
 use yii1tech\psr\cache\CacheItemPool;
 
 class CacheItemPoolTest extends TestCase
@@ -231,5 +232,36 @@ class CacheItemPoolTest extends TestCase
 
         $item = $pool->getItem($key);
         $this->assertFalse($item->isHit());
+    }
+
+    /**
+     * @depends testSave
+     */
+    public function testGetCallback(): void
+    {
+        $pool = new CacheItemPool();
+
+        $key = 'test';
+
+        $value = $pool->get($key, function (CacheItemContract $item) {
+            $item->expiresAfter(DateInterval::createFromDateString('1 hour'));
+
+            return 'test-value';
+        });
+
+        $this->assertSame('test-value', $value);
+
+        $item = $pool->getItem($key);
+        $this->assertTrue($item->isHit());
+        $this->assertSame('test-value', $item->get());
+
+        $value = $pool->get($key, function (CacheItemContract $item) {
+            $item->expiresAfter(DateInterval::createFromDateString('1 hour'));
+
+            return 'new-value';
+        });
+
+        $this->assertSame('test-value', $value);
+        $this->assertSame('test-value', $pool->getItem($key)->get());
     }
 }
