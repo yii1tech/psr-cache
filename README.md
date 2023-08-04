@@ -104,22 +104,23 @@ Usage example:
 
 use Psr\Cache\CacheItemPoolInterface;
 
-function getCategoriesCount()
+function getCachedValue()
 {
     /** @var CacheItemPoolInterface $pool */
     $pool = Yii::app()->getComponent(CacheItemPoolInterface::class);
     
-    $item = $pool->getItem('categories-count');
-    if ($item->isHit()) {
-        return $item->get();
+    $item = $pool->getItem('example-cache-id');
+    
+    if ($item->isHit()) { 
+        return $item->get(); // cache exist - return cached value
     }
     
-    $value = Category::model()->count();
+    $value = Yii::app()->db->createCommand('SELECT ...')->query(); // some heave SQL query.
     
-    $item->set($value)
-        ->expiresAfter(DateInterval::createFromDateString('1 hour'));
+    $item->set($value) // set value to be cached
+        ->expiresAfter(DateInterval::createFromDateString('1 hour')); // set expiration
     
-    $pool->save($item);
+    $pool->save($item); // put value into cache
     
     return $value;
 }
@@ -127,6 +128,68 @@ function getCategoriesCount()
 
 
 ### Extended interface <span id="extended-interface"></span>
+
+This extension introduces 2 interfaces, which extend the ones from PSR-6:
+
+- `\yii1tech\psr\cache\CacheItemPoolContract`
+- `\yii1tech\psr\cache\CacheItemContract`
+
+These interfaces could be used to utilize additional functionality, which is omitted at PSR.
+In particular these allow usage of Yii cache dependency feature. For example:
+
+```php
+<?php
+
+use yii1tech\psr\cache\CacheItemPoolContract;
+
+function getValueCachedWithDependency()
+{
+    /** @var CacheItemPoolContract $pool */
+    $pool = Yii::app()->getComponent(CacheItemPoolContract::class);
+    
+    $item = $pool->getItem('example-cache-id');
+    
+    if ($item->isHit()) {
+        return $item->get(); // cache exist - return cached value
+    }
+    
+    $value = Yii::app()->db->createCommand('SELECT ...')->query(); // some heave SQL query.
+    
+    $item->set($value) // set value to be cached
+        ->expiresAfter(DateInterval::createFromDateString('1 hour')) // set expiration
+        ->depends(new CDbCacheDependency('SELECT MAX(id) FROM `items`')); // set cache dependency
+    
+    $pool->save($item); // put value into cache
+    
+    return $value;
+}
+```
+
+In addition, `\yii1tech\psr\cache\CacheItemPoolContract` declares method `get()`, which can be used to simplify usage
+of the cache pool, making it similar to [Symfony](https://symfony.com/doc/7.0/cache.html).
+For example:
+
+```php
+<?php
+
+use yii1tech\psr\cache\CacheItemContract;
+use yii1tech\psr\cache\CacheItemPoolContract;
+
+function getCachedValue()
+{
+    /** @var CacheItemPoolContract $pool */
+    $pool = Yii::app()->getComponent(CacheItemPoolContract::class);
+    
+    return $pool->get('example-cache-id', function (CacheItemContract $item) {
+        // enters here, only if cache is missing
+        $item->expiresAfter(DateInterval::createFromDateString('1 hour')); // use callback argument to configure cache item: set expiration and so on
+        
+        $value = Yii::app()->db->createCommand('SELECT ...')->query(); // some heave SQL query.
+        
+        return $value; // returned value automatically saved ot cache
+    });
+}
+```
 
 
 ### Using cache tags <span id="using-cache-tags"></span>
