@@ -8,6 +8,29 @@ use Psr\Cache\CacheItemPoolInterface;
 use Yii;
 
 /**
+ * CacheItemPool allows wrapping standard Yii cache component into a PSR compatible cache pool.
+ *
+ * Application configuration example:
+ *
+ * ```php
+ * return [
+ *     'components' => [
+ *         'cache' => [
+ *             'class' => \CMemCache::class,
+ *             'servers' => [
+ *                 // ...
+ *             ],
+ *         ],
+ *         \Psr\Cache\CacheItemPoolInterface::class => [
+ *             'class' => \yii1tech\psr\cache\CacheItemPool::class,
+ *             'cache' => 'cache',
+ *         ],
+ *         // ...
+ *     ],
+ *     // ...
+ * ];
+ * ```
+ *
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 1.0
  */
