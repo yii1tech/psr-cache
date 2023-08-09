@@ -31,8 +31,8 @@ use Yii;
  * ```
  *
  * > Note: his package does not directly implement cache tags feature - it does rely on wrapped Yii cache component to support it instead.
- *   All tags associated with the cache items are passed as 5th argument to {@see \ICache::set()} method assuming its particular implementation will
- *   handle them. Thus cache item tags saving will **silently fail** in related cache component does not provide support for it.
+ *   All tags associated with the cache item are passed as 5th argument to {@see \ICache::set()} method, assuming its particular implementation will
+ *   handle them. Thus cache item tags saving will **silently fail** if related cache component does not provide support for it.
  *
  * @see https://github.com/yii1tech/tagged-cache
  * @see \yii1tech\psr\cache\CacheItem

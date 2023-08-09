@@ -44,7 +44,7 @@ It provides several instruments for that. Please choose the one suitable for you
 
 ### Wrap PSR cache pool into Yii cache <span id="wrap-psr-cache-pool-into-yii-cache"></span>
 
-The most common use case for PSR caceh involvement into Yii application is usage of 3rd party cache library.
+The most common use case for PSR cache involvement into Yii application is usage of 3rd party cache library.
 This can be achieved using `\yii1tech\psr\cache\Cache` as Yii cache component.
 
 Application configuration example:
@@ -70,7 +70,7 @@ return [
 
 ### Wrap Yii cache into PSR cache pool <span id="wrap-yii-cache-into-psr-cache-pool"></span>
 
-There is another use case related to PSR cache besides bootstrapping eternal cache storage.
+There is another use case related to PSR cache besides bootstrapping external cache storage.
 Sometimes 3rd party libraries may require PSR cache pool instance to be passed to them in order to function.
 `\Psr\Cache\CacheItemPoolInterface` allows wrapping standard Yii cache component into a PSR compatible cache pool.
 
@@ -197,8 +197,8 @@ function getCachedValue()
 This extension allows setup of tags per each particular cache items via `\yii1tech\psr\cache\CacheItemContract::tag()` method.
 
 **Heads up!** This package does not directly implement cache tags feature - it does rely on wrapped Yii cache component to support it instead.
-All tags associated with the cache items are passed as 5th argument to `\ICache::set()` method assuming its particular implementation will
-handle them. Thus cache item tags saving will **silently fail** in related cache component does not provide support for it.
+All tags associated with the cache item are passed as 5th argument to `\ICache::set()` method, assuming its particular implementation will
+handle them. Thus cache item tags saving will **silently fail** if related cache component does not provide support for it.
 
 You may use [yii1tech/tagged-cache](https://github.com/yii1tech/tagged-cache) extension to get a tag aware cache Yii component.
 
