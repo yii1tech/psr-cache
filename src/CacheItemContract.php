@@ -23,4 +23,12 @@ interface CacheItemContract extends CacheItemInterface
      * @return static self reference.
      */
     public function depends(?\ICacheDependency $dependency);
+
+    /**
+     * Adds one or multiple tags to the item.
+     *
+     * @param string|string[] $tags tag or list of tags.
+     * @return static self reference.
+     */
+    public function tag($tags);
 }

@@ -5,6 +5,7 @@ namespace yii1tech\psr\cache\test;
 use CDummyCache;
 use DateInterval;
 use ICache;
+use yii1tech\cache\tagged\ArrayCache;
 use yii1tech\psr\cache\CacheItemContract;
 use yii1tech\psr\cache\CacheItemPool;
 
@@ -263,5 +264,33 @@ class CacheItemPoolTest extends TestCase
 
         $this->assertSame('test-value', $value);
         $this->assertSame('test-value', $pool->getItem($key)->get());
+    }
+
+    /**
+     * @depends testSave
+     */
+    public function testSaveWithTags(): void
+    {
+        $pool = new CacheItemPool();
+        $pool->setCache(new ArrayCache());
+
+        $item = $pool->getItem('test-1');
+        $item->set('test-value-1');
+        $item->expiresAfter(DateInterval::createFromDateString('1 hour'));
+        $item->tag('tag-1');
+
+        $this->assertTrue($pool->save($item));
+
+        $item = $pool->getItem('test-2');
+        $item->set('test-value-2');
+        $item->expiresAfter(DateInterval::createFromDateString('1 hour'));
+        $item->tag('tag-2');
+
+        $this->assertTrue($pool->save($item));
+
+        $this->assertTrue($pool->invalidateTags(['tag-1']));
+
+        $this->assertFalse($pool->hasItem('test-1'));
+        $this->assertTrue($pool->hasItem('test-2'));
     }
 }

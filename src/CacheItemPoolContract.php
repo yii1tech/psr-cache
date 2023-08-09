@@ -50,5 +50,11 @@ interface CacheItemPoolContract extends CacheItemPoolInterface
      */
     public function get(string $key, callable $callback);
 
-    //public function invalidateTags(array $tags);
+    /**
+     * Deletes cached entries, associated with given tags.
+     *
+     * @param string[] $tags tags, which associated with items should be deleted.
+     * @return bool whether cache entries have been successfully deleted or not.
+     */
+    public function invalidateTags(array $tags): bool;
 }

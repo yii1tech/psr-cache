@@ -30,6 +30,13 @@ use Yii;
  * ];
  * ```
  *
+ * > Note: for the cache item tags feature this class rely on wrapped Yii cache component, saving item tags
+ *   will silently fail if such support is not provided. You'll need to install and use "yii1tech/tagged-cache"
+ *   extension in order to make tags feature function.
+ *
+ * @see https://github.com/yii1tech/tagged-cache
+ * @see \yii1tech\psr\cache\CacheItem
+ *
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 1.0
  */
@@ -198,7 +205,8 @@ class CacheItemPool extends CApplicationComponent implements CacheItemPoolContra
             $item->getKey(),
             $item->get(),
             $item->getExpire(),
-            $item->getDependency()
+            $item->getDependency(),
+            $item->getTags()
         );
     }
 
@@ -248,5 +256,13 @@ class CacheItemPool extends CApplicationComponent implements CacheItemPoolContra
         $this->save($item);
 
         return $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function invalidateTags(array $tags): bool
+    {
+        return $this->getCache()->invalidateTags($tags);
     }
 }

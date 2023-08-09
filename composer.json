@@ -20,6 +20,7 @@
         "psr/cache": "^1.0.0"
     },
     "require-dev": {
+        "yii1tech/tagged-cache": "^1.0.0",
         "phpunit/phpunit": "^6.0 || ^7.0 || ^8.0 || ^9.3 || ^10.0.7"
     },
     "autoload": {

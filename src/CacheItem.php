@@ -5,6 +5,10 @@ namespace yii1tech\psr\cache;
 use CComponent;
 
 /**
+ * CacheItem represents cache item used for interaction with {@see \yii1tech\psr\cache\CacheItemPool}.
+ *
+ * @see \yii1tech\psr\cache\CacheItemPool
+ *
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 1.0
  */
@@ -14,21 +18,22 @@ class CacheItem extends CComponent implements CacheItemContract
      * @var string cache item key (ID).
      */
     private $_key;
-
     /**
      * @var mixed cache item value.
      */
     private $_value;
-
     /**
      * @var int|null cache item expire.
      */
     private $_expire;
-
     /**
      * @var \ICacheDependency|null dependency of the cache item.
      */
     private $_dependency;
+    /**
+     * @var string[] list of cache item tags.
+     */
+    private $_tags = [];
 
     /**
      * Sets the key for the current cache item.
@@ -68,6 +73,14 @@ class CacheItem extends CComponent implements CacheItemContract
         $this->_dependency = $dependency;
 
         return $this;
+    }
+
+    /**
+     * @return string[] list of associated tags.
+     */
+    public function getTags(): array
+    {
+        return $this->_tags;
     }
 
     /**
@@ -145,5 +158,19 @@ class CacheItem extends CComponent implements CacheItemContract
     public function depends(?\ICacheDependency $dependency): self
     {
         return $this->setDependency($dependency);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function tag($tags): self
+    {
+        if (!is_array($tags)) {
+            $tags = [$tags];
+        }
+
+        $this->_tags = $tags;
+
+        return $this;
     }
 }
