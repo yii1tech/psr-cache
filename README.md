@@ -194,3 +194,71 @@ function getCachedValue()
 
 ### Using cache tags <span id="using-cache-tags"></span>
 
+This extension allows setup of tags per each particular cache items via `\yii1tech\psr\cache\CacheItemContract::tag()` method.
+
+**Heads up!** This package does not directly implement cache tags feature - it does rely on wrapped Yii cache component to support it instead.
+All tags associated with the cache items are passed as 5th argument to `\ICache::set()` method assuming its particular implementation will
+handle them. Thus cache item tags saving will **silently fail** in related cache component does not provide support for it.
+
+You may use [yii1tech/tagged-cache](https://github.com/yii1tech/tagged-cache) extension to get a tag aware cache Yii component.
+
+Application configuration example:
+
+```php
+<?php
+
+return [
+    'components' => [
+        'cache' => [
+            'class' => \yii1tech\cache\tagged\MemCache::class, // use tag aware cache component
+            'servers' => [
+                // ...
+            ],
+        ],
+        \Psr\Cache\CacheItemPoolInterface::class => [
+            'class' => \yii1tech\psr\cache\CacheItemPool::class,
+            'cache' => 'cache',
+        ],
+        // ...
+    ],
+    // ...
+];
+```
+
+Tag specification example:
+
+```php
+<?php
+
+use yii1tech\psr\cache\CacheItemContract;
+use yii1tech\psr\cache\CacheItemPoolContract;
+
+function getCachedValue()
+{
+    /** @var CacheItemPoolContract $pool */
+    $pool = Yii::app()->getComponent(CacheItemPoolContract::class);
+    
+    return $pool->get('example-cache-id', function (CacheItemContract $item) {
+        $item->expiresAfter(DateInterval::createFromDateString('1 hour'));
+        $item->tag(['database', 'example']); // specify the list of tags for the item
+        
+        $value = Yii::app()->db->createCommand('SELECT ...')->query(); // some heave SQL query.
+        
+        return $value;
+    });
+}
+```
+
+In order to clear items associated with particular tag use `\yii1tech\psr\cache\CacheItemPoolContract::invalidateTags()`.
+For example:
+
+```php
+<?php
+
+use yii1tech\psr\cache\CacheItemPoolContract;
+
+/** @var CacheItemPoolInterface $pool */
+$pool = Yii::app()->getComponent(CacheItemPoolInterface::class);
+
+$pool->invalidateTags(['database']); // clear only items tagged as "database"
+```

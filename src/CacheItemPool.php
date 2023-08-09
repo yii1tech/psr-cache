@@ -30,9 +30,9 @@ use Yii;
  * ];
  * ```
  *
- * > Note: for the cache item tags feature this class rely on wrapped Yii cache component, saving item tags
- *   will silently fail if such support is not provided. You'll need to install and use "yii1tech/tagged-cache"
- *   extension in order to make tags feature function.
+ * > Note: his package does not directly implement cache tags feature - it does rely on wrapped Yii cache component to support it instead.
+ *   All tags associated with the cache items are passed as 5th argument to {@see \ICache::set()} method assuming its particular implementation will
+ *   handle them. Thus cache item tags saving will **silently fail** in related cache component does not provide support for it.
  *
  * @see https://github.com/yii1tech/tagged-cache
  * @see \yii1tech\psr\cache\CacheItem
